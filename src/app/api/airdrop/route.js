@@ -31,12 +31,7 @@ export async function POST(request) {
       Number(amount) * LAMPORTS_PER_SOL
     );
 
-    const latestBlockhash = await connection.getLatestBlockhash();
-    await connection.confirmTransaction({
-      signature,
-      blockhash: latestBlockhash.blockhash,
-      lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-    });
+
 
     return NextResponse.json({ signature });
   } catch (err) {
