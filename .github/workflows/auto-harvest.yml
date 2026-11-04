@@ -1,0 +1,18 @@
+name: Auto Devnet SOL Harvester
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" 
+  workflow_dispatch:      
+
+jobs:
+  harvest-sol:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request 1 Devnet SOL from Fresh Cloud IP + Trigger LamportTap API
+        run: |
+          curl -s -X POST https://api.devnet.solana.com \
+            -H "Content-Type: application/json" \
+            -d '{"jsonrpc":"2.0","id":1,"method":"requestAirdrop","params":["F3FeCPujtrVpLyNynmXQTAM4okuvMmi9TyTFziMRaFyL", 1000000000]}'
+          echo ""
+          curl -s https://lamport-tap.vercel.app/api/cron
