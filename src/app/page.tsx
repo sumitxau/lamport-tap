@@ -1,16 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { DROP_OPTIONS_SOL, DEFAULT_DROP_SOL } from "@/config/constants";
+import { useState, type FormEvent } from "react";
+import {
+  DROP_OPTIONS_SOL,
+  DEFAULT_DROP_SOL,
+  type DropAmountSol,
+} from "@/config/constants";
 import { requestDevnetSol } from "@/services/faucetService";
+
+type Status = {
+  type: "" | "info" | "success" | "error";
+  message: string;
+  tx: string;
+};
 
 export default function HomePage() {
   const [address, setAddress] = useState("");
-  const [amount, setAmount] = useState(DEFAULT_DROP_SOL);
+  const [amount, setAmount] = useState<DropAmountSol>(DEFAULT_DROP_SOL);
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState({ type: "", message: "", tx: "" });
+  const [status, setStatus] = useState<Status>({
+    type: "",
+    message: "",
+    tx: "",
+  });
 
-  async function handleAirdrop(e) {
+  async function handleAirdrop(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     setStatus({ type: "info", message: `Requesting ${amount} Devnet SOL...`, tx: "" });
@@ -25,7 +39,10 @@ export default function HomePage() {
     } catch (err) {
       setStatus({
         type: "error",
-        message: err.message || "Airdrop rate-limited. Try again shortly.",
+        message:
+          err instanceof Error && err.message
+            ? err.message
+            : "Airdrop rate-limited. Try again shortly.",
         tx: "",
       });
     } finally {
