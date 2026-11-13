@@ -12,7 +12,13 @@ jobs:
       - name: Trigger LamportTap cron airdrop
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-        run: |
-          curl --fail-with-body -sS \
+       run: |
+          HTTP_STATUS=$(curl -sS -o response.txt -w "%{http_code}" \
             -H "Authorization: Bearer $CRON_SECRET" \
-            https://lamport-tap.vercel.app/api/airdrop/cron
+            https://lamport-tap.vercel.app/api/airdrop/cron)
+          cat response.txt
+          echo ""
+          echo "HTTP Status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -eq 401 ]; then
+            echo "Warning: 401 Unauthorized - make sure CRON_SECRET is in Settings -> Secrets and variables -> Actions -> Repository secrets (and matches Vercel)."
+          fi
